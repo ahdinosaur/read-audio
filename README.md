@@ -2,7 +2,7 @@
 
 #### stability: experimental
 
-read audio as a stream of typed arrays.
+read audio as a stream of typed ndarrays.
 
 currently uses SoX.
 
@@ -18,6 +18,8 @@ npm i --save read-audio
 
 ```
 var readAudio = require('read-audio')
+var through = require('through2')
+var show = require('ndarray-show')
 
 var audio = readAudio({
   soxPath: 'sox',
@@ -32,7 +34,11 @@ var audio = readAudio({
 })
 
 audio.stderr.pipe(process.stderr)
-audio.pipe(require('stdout')())
+audio
+.pipe(through.obj(function (arr, enc, cb) {
+  cb(null, show(arr))
+}))
+.pipe(process.stdout)
 ```
 
 ## license
