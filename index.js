@@ -25,12 +25,12 @@ function audioReadStream (opts) {
   var ps = spawn(
     opts.soxPath,
     [
-      opts.inFile,
       '--bits', opts.bits,
       '--channels', opts.channels,
       '--encoding', opts.encoding,
       '--endian', opts.endian,
       '--rate', opts.rate,
+      opts.inFile,
       '-p'
     ]
   )
