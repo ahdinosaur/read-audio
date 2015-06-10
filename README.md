@@ -19,7 +19,16 @@ npm i --save read-audio
 ```
 var readAudio = require('read-audio')
 
-var audio = readAudio()
+var audio = readAudio({
+  soxPath: 'sox',
+  inFile: '-d', // '-d' is default device
+  bits: 16, // 8 16 32 supported
+  channels: 1,
+  encoding: 'unsigned-integer',
+    // 'signed-integer' also supported
+  endian: 'little'
+    // 'big' also supported
+})
 
 audio.stderr.pipe(process.stderr)
 audio.pipe(require('stdout')())
