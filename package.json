@@ -1,0 +1,29 @@
+{
+  "name": "read-audio",
+  "version": "1.0.0",
+  "description": "read audio as a stream of typed arrays",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loopjs/read-audio"
+  },
+  "keywords": [],
+  "author": "ahdinosaur",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loopjs/read-audio/issues"
+  },
+  "homepage": "https://github.com/loopjs/read-audio",
+  "devDependencies": {
+    "stdout": "0.0.3"
+  },
+  "dependencies": {
+    "defined": "^1.0.0",
+    "enum-buffer-array-types": "^2.0.1",
+    "repeat-array": "^1.0.0",
+    "through2": "^0.6.5"
+  }
+}
