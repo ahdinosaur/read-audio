@@ -12,6 +12,7 @@ function defaultOpts (opts) {
   opts.inFile = defined(opts.inFile, '-d')
   opts.bits = defined(opts.bits, 2 * 8)
   opts.channels = defined(opts.channels, 1)
+  opts.rate = defined(opts.rate, 48000)
   opts.encoding = defined(opts.encoding, 'signed-integer')
   opts.endian = defined(opts.endian, 'little')
   return opts
@@ -29,6 +30,7 @@ function audioReadStream (opts) {
       '--channels', opts.channels,
       '--encoding', opts.encoding,
       '--endian', opts.endian,
+      '--rate', opts.rate,
       '-p'
     ]
   )
