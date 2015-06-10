@@ -1,6 +1,6 @@
 {
   "name": "read-audio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "read audio as a stream of typed arrays",
   "main": "index.js",
   "scripts": {
