@@ -5,6 +5,7 @@ var through = require('through2')
 var defined = require('defined')
 var repeat = require('repeat-array')
 var typedArrayTypes = require('enum-buffer-array-types')
+var Ndarray = require('ndarray')
 
 function defaultOpts (opts) {
   opts = defined(opts, {})
@@ -66,29 +67,34 @@ function parseRawAudio (opts) {
     var numSamples = getNumSamples(buf)
     var bufferRead = buf[bufferReadId].bind(buf)
 
-    var channelSamples = repeat(function () {
-      return new TypedArray(numSamples)
-    }, numChannels)
+    var samples = Ndarray(
+      new TypedArray(numChannels * numSamples),
+      [numChannels, numSamples]
+    )
 
-    var sampleIndex, channelIndex, offset
-    for (sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
+    var timeIndex, channelIndex, offset
+    for (timeIndex = 0; timeIndex < numSamples; timeIndex++) {
       for (channelIndex = 0; channelIndex < numChannels; channelIndex++) {
-        offset = sampleIndex + channelIndex
-        channelSamples[channelIndex][sampleIndex] = bufferRead(offset, byteRate)
+        offset = timeIndex + channelIndex
+        samples.set(channelIndex, timeIndex, bufferRead(offset, byteRate))
       }
     }
 
-    cb(null, channelSamples)
+    cb(null, samples)
   })
 }
 
 if (!module.parent) {
-  var stdout = require('stdout')
+  var show = require('ndarray-show')
 
   var audio = audioReadStream()
 
   audio.stderr.pipe(process.stderr)
-  audio.pipe(stdout())
+  audio
+  .pipe(through.obj(function (arr, enc, cb) {
+    cb(null, show(arr))
+  }))
+  .pipe(process.stdout)
 }
 
 function getTypedArray (opts) {

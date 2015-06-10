@@ -1,7 +1,7 @@
 {
   "name": "read-audio",
   "version": "1.0.1",
-  "description": "read audio as a stream of typed arrays",
+  "description": "read audio as a stream of typed ndarrays",
   "main": "index.js",
   "scripts": {
     "test": "tape test/*.js"
@@ -18,11 +18,12 @@
   },
   "homepage": "https://github.com/loopjs/read-audio",
   "devDependencies": {
-    "stdout": "0.0.3"
+    "ndarray-show": "^1.1.1"
   },
   "dependencies": {
     "defined": "^1.0.0",
     "enum-buffer-array-types": "^2.0.1",
+    "ndarray": "^1.0.18",
     "repeat-array": "^1.0.0",
     "through2": "^0.6.5"
   }
