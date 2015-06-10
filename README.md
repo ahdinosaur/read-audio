@@ -1,5 +1,7 @@
 # read-audio 
 
+#### stability: experimental
+
 read audio as a stream of typed arrays.
 
 currently uses SoX.
