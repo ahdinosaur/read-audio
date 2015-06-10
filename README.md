@@ -24,8 +24,8 @@ var audio = readAudio({
   inFile: '-d', // '-d' is default device
   bits: 16, // 8 16 32 supported
   channels: 1,
-  encoding: 'unsigned-integer',
-    // 'signed-integer' also supported
+  encoding: 'signed-integer',
+    // 'unsigned-integer' also supported
   endian: 'little'
     // 'big' also supported
 })

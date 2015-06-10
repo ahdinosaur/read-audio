@@ -12,7 +12,7 @@ function defaultOpts (opts) {
   opts.inFile = defined(opts.inFile, '-d')
   opts.bits = defined(opts.bits, 2 * 8)
   opts.channels = defined(opts.channels, 1)
-  opts.encoding = defined(opts.encoding, 'unsigned-integer')
+  opts.encoding = defined(opts.encoding, 'signed-integer')
   opts.endian = defined(opts.endian, 'little')
   return opts
 }
