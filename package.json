@@ -1,6 +1,6 @@
 {
   "name": "read-audio",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "read audio as a stream of typed ndarrays",
   "main": "index.js",
   "scripts": {
@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ahdinosaur/read-audio"
+    "url": "https://github.com/wavejs/read-audio"
   },
   "keywords": [],
   "author": "ahdinosaur",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ahdinosaur/read-audio/issues"
+    "url": "https://github.com/wavejs/read-audio/issues"
   },
-  "homepage": "https://github.com/ahdinosaur/read-audio",
+  "homepage": "https://github.com/wavejs/read-audio",
   "devDependencies": {
     "ndarray-show": "^1.1.1"
   },
