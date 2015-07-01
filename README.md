@@ -24,11 +24,12 @@ var show = require('ndarray-show')
 var audio = readAudio({
   soxPath: 'sox',
   inFile: '-d', // '-d' is default device
-  bits: 16, // 8 16 32 supported
   channels: 1,
   rate: 48000,
-  encoding: 'signed-integer',
-    // 'unsigned-integer' also supported
+  dtype: 'int16',
+    // int8, uint8, int16, uint16,
+    // int32, uint32, float32, float64
+    // also supported
   endian: 'little'
     // 'big' also supported
 })

@@ -1,6 +1,6 @@
 {
   "name": "read-audio",
-  "version": "2.0.3",
+  "version": "3.0.0-pre0",
   "description": "read audio as a stream of typed ndarrays",
   "main": "index.js",
   "scripts": {
@@ -21,10 +21,10 @@
     "ndarray-show": "^1.1.1"
   },
   "dependencies": {
+    "buffer-to-typed-array": "^1.0.1",
     "defined": "^1.0.0",
-    "enum-buffer-array-types": "^2.0.1",
+    "dtype": "^2.0.0",
     "ndarray": "^1.0.18",
-    "repeat-array": "^1.0.0",
     "through2": "^0.6.5"
   }
 }

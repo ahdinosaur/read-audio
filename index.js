@@ -3,24 +3,17 @@
 var spawn = require('child_process').spawn
 var through = require('through2')
 var defined = require('defined')
-var repeat = require('repeat-array')
-var typedArrayTypes = require('enum-buffer-array-types')
 var Ndarray = require('ndarray')
+var getDataType = require('dtype')
+var bufferToTypedArray = require('buffer-to-typed-array')
 
-function defaultOpts (opts) {
-  opts = defined(opts, {})
-  opts.soxPath = defined(opts.soxPath, 'sox')
-  opts.inFile = defined(opts.inFile, '-d')
-  opts.bits = defined(opts.bits, 2 * 8)
-  opts.channels = defined(opts.channels, 1)
-  opts.rate = defined(opts.rate, 48000)
-  opts.encoding = defined(opts.encoding, 'signed-integer')
-  opts.endian = defined(opts.endian, 'little')
-  return opts
-}
+module.exports = audioReadStream
 
 function audioReadStream (opts) {
   opts = defaultOpts(opts)
+
+  // get derived opts
+  opts = deriveOpts(opts)
   
   // run sox process
   var ps = spawn(
@@ -51,103 +44,50 @@ function audioReadStream (opts) {
 }
     
 function parseRawAudio (opts) {
-
-  var byteRate = opts.bits / 8
-  var numChannels = opts.channels
-
-  function getNumSamples (buf) {
-    return buf.length /
-      (byteRate * numChannels)
-  }
-
-  var bufferReadId = getBufferReadId(opts)
-  var TypedArray = getTypedArray(opts)
+  var toTypedArray = bufferToTypedArray({
+    dtype: opts.dtype,
+    endian: opts.endian
+  })
 
   return through.obj(function (buf, enc, cb) {
-    var numSamples = getNumSamples(buf)
-    var bufferRead = buf[bufferReadId].bind(buf)
-
-    var samples = Ndarray(
-      new TypedArray(numChannels * numSamples),
-      [numChannels, numSamples]
+    var arr = toTypedArray(buf)
+    var ndarr = Ndarray(
+      arr,
+      [opts.channels, arr.length / opts.channels]
     )
 
-    var timeIndex, channelIndex, offset
-    for (timeIndex = 0; timeIndex < numSamples; timeIndex++) {
-      for (channelIndex = 0; channelIndex < numChannels; channelIndex++) {
-        offset = timeIndex + channelIndex
-        samples.set(channelIndex, timeIndex, bufferRead(offset, byteRate))
-      }
-    }
-
-    cb(null, samples)
+    cb(null, ndarr)
   })
 }
 
-if (!module.parent) {
-  var show = require('ndarray-show')
-
-  var audio = audioReadStream()
-
-  audio.stderr.pipe(process.stderr)
-  audio
-  .pipe(through.obj(function (arr, enc, cb) {
-    cb(null, show(arr))
-  }))
-  .pipe(process.stdout)
+function defaultOpts (opts) {
+  opts = defined(opts, {})
+  opts.soxPath = defined(opts.soxPath, 'sox')
+  opts.inFile = defined(opts.inFile, '-d')
+  opts.dtype = defined(opts.dtype, 'int16')
+  opts.channels = defined(opts.channels, 1)
+  opts.rate = defined(opts.rate, 48000)
+  opts.endian = defined(opts.endian, 'little')
+  return opts
 }
 
-function getTypedArray (opts) {
-  var typedArrayId = getTypedArrayId(opts)
-
-  return typedArrayTypes.getConstructor(
-    typedArrayTypes[typedArrayId]
-  )
+function deriveOpts (opts) {
+  opts.encoding = getEncoding(opts.dtype)
+  opts.bits = getBits(opts.dtype)
+  return opts
 }
 
-function getTypedArrayId (opts) {
-  return '' + toEncoding(opts.encoding) + toBits(opts.bits) + 'Array'
-
-  function toBits (bits) {
-    switch (bits) {
-      case 8: case 16: case 32:
-        return String(bits)
-      default:
-        throw new Error('bits not implemented: ' + bits)
-    }
-  }
-
-  function toEncoding (encoding) {
-    switch (encoding) {
-      case 'signed-integer':
-        return 'Int'
-      case 'unsigned-integer':
-        return 'Uint'
-      default:
-        throw new Error("typed array encoding not implemented: " + encoding)
-    }
+function getEncoding (dtype) {
+  switch (dtype[0]) {
+    case 'u':
+      return 'unsigned-integer'
+    case 'i':
+      return 'signed-integer'
+    case 'f':
+      return 'floating-point'
   }
 }
 
-function getBufferReadId (opts) {
-  return 'read' + toEncoding(opts.encoding) + toEndian(opts.endian)
-
-  function toEndian (endian) {
-    if (endian !== 'little' && endian !== 'big') {
-      throw new Error('incorrect endian: ' + endian)
-    }
-
-    return (endian === 'little') ? 'LE' : 'BE'
-  }
-
-  function toEncoding (encoding) {
-    switch (encoding) {
-      case 'signed-integer':
-        return 'Int'
-      case 'unsigned-integer':
-        return 'UInt'
-      default:
-        throw new Error("buffer encoding not implemented: " + encoding)
-    }
-  }
-}
+function getBits (dtype) {
+  return getDataType(dtype).BYTES_PER_ELEMENT * 8
+} 
