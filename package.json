@@ -21,7 +21,7 @@
     "ndarray-show": "^1.1.1"
   },
   "dependencies": {
-    "buffer-to-typed-array": "^1.0.1",
+    "buffer-to-uint8array": "^1.1.0",
     "defined": "^1.0.0",
     "dtype": "^2.0.0",
     "ndarray": "^1.0.18",

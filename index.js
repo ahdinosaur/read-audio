@@ -5,7 +5,7 @@ var through = require('through2')
 var defined = require('defined')
 var Ndarray = require('ndarray')
 var getDataType = require('dtype')
-var bufferToTypedArray = require('buffer-to-typed-array')
+var toUint8 = require('buffer-to-uint8array')
 
 module.exports = audioReadStream
 
@@ -22,7 +22,6 @@ function audioReadStream (opts) {
       '--bits', opts.bits,
       '--channels', opts.channels,
       '--encoding', opts.encoding,
-      '--endian', opts.endian,
       '--rate', opts.rate,
       opts.inFile,
       '-p'
@@ -42,12 +41,16 @@ function audioReadStream (opts) {
   
   return audio
 }
+
+function bufferToTypedArray (dtype) {
+  var TypedArray = getDataType(dtype)
+  return function (buf) {
+    return new TypedArray(toUint8(buf))
+  }
+}
     
 function parseRawAudio (opts) {
-  var toTypedArray = bufferToTypedArray({
-    dtype: opts.dtype,
-    endian: opts.endian
-  })
+  var toTypedArray = bufferToTypedArray(opts.dtype)
 
   return through.obj(function (buf, enc, cb) {
     var arr = toTypedArray(buf)
@@ -64,10 +67,9 @@ function defaultOpts (opts) {
   opts = defined(opts, {})
   opts.soxPath = defined(opts.soxPath, 'sox')
   opts.inFile = defined(opts.inFile, '-d')
-  opts.dtype = defined(opts.dtype, 'int16')
+  opts.dtype = defined(opts.dtype, 'float32')
   opts.channels = defined(opts.channels, 1)
   opts.rate = defined(opts.rate, 48000)
-  opts.endian = defined(opts.endian, 'little')
   return opts
 }
 
