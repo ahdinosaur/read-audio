@@ -67,7 +67,7 @@ function defaultOpts (opts) {
   opts = defined(opts, {})
   opts.soxPath = defined(opts.soxPath, 'sox')
   opts.inFile = defined(opts.inFile, '-d')
-  opts.dtype = defined(opts.dtype, 'float32')
+  opts.dtype = defined(opts.dtype, 'int32')
   opts.channels = defined(opts.channels, 1)
   opts.rate = defined(opts.rate, 48000)
   return opts
