@@ -1,10 +1,8 @@
 # read-audio 
 
-#### stability: experimental
+use SoX to read audio samples as a stream of typed ndarrays of floats between -1.0 and 1.0.
 
-read audio as a stream of typed ndarrays.
-
-currently uses SoX.
+**stability: unstable.**
 
 ## install
 
@@ -24,14 +22,12 @@ var show = require('ndarray-show')
 var audio = readAudio({
   soxPath: 'sox',
   inFile: '-d', // '-d' is default device
-  channels: 1,
+  channels: 2,
   rate: 48000,
-  dtype: 'int16',
+  dtype: 'int32',
     // int8, uint8, int16, uint16,
     // int32, uint32, float32, float64
     // also supported
-  endian: 'little'
-    // 'big' also supported
 })
 
 audio.stderr.pipe(process.stderr)
