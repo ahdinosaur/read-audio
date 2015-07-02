@@ -70,7 +70,7 @@ function defaultOpts (opts) {
   opts.dtype = defined(opts.dtype, 'int32')
   opts.channels = defined(opts.channels, 1)
   opts.rate = defined(opts.rate, 48000)
-  opts.buffer = defined(opts.buffer, 512)
+  opts.buffer = defined(opts.buffer, 1024)
   return opts
 }
 
