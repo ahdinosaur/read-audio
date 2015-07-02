@@ -1,15 +1,14 @@
 var audioReadStream = require('./')
 var through = require('through2')
+var terminalBar = require('terminal-bar')
 
-if (!module.parent) {
-  var show = require('ndarray-show')
+var audio = audioReadStream({
+  buffer: 1024
+})
 
-  var audio = audioReadStream()
-
-  audio.stderr.pipe(process.stderr)
-  audio
-  .pipe(through.obj(function (arr, enc, cb) {
-    cb(null, show(arr))
-  }))
-  .pipe(process.stdout)
-}
+audio
+.pipe(through.obj(function (arr, enc, cb) {
+  var data = [].slice.call(arr.data).slice(0, 128)
+  cb(null, terminalBar(data) + "\n")
+}))
+.pipe(process.stdout)

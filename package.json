@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/livejs/read-audio",
   "devDependencies": {
-    "ndarray-show": "^1.1.1"
+    "terminal-bar": "0.0.3"
   },
   "dependencies": {
     "buffer-to-uint8array": "^1.1.0",
