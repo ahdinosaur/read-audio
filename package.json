@@ -1,6 +1,6 @@
 {
   "name": "read-audio",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "read audio as a stream of typed ndarrays",
   "main": "index.js",
   "scripts": {
