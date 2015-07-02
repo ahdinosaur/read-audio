@@ -19,6 +19,7 @@ function audioReadStream (opts) {
   var ps = spawn(
     opts.soxPath,
     [
+      '--buffer', opts.buffer,
       '--bits', opts.bits,
       '--channels', opts.channels,
       '--encoding', opts.encoding,
@@ -58,7 +59,6 @@ function parseRawAudio (opts) {
       arr,
       [opts.channels, arr.length / opts.channels]
     )
-
     cb(null, ndarr)
   })
 }
@@ -70,6 +70,7 @@ function defaultOpts (opts) {
   opts.dtype = defined(opts.dtype, 'int32')
   opts.channels = defined(opts.channels, 1)
   opts.rate = defined(opts.rate, 48000)
+  opts.buffer = defined(opts.buffer, 512)
   return opts
 }
 
