@@ -2,7 +2,7 @@
 
 use SoX to read audio samples as a stream of typed ndarrays of floats between -1.0 and 1.0.
 
-**stability: unstable.**
+[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 ## install
 
