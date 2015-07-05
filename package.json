@@ -21,7 +21,7 @@
     "terminal-bar": "0.0.3"
   },
   "dependencies": {
-    "buffer-to-uint8array": "^1.1.0",
+    "buffer-to-typed-array": "^2.0.0",
     "defined": "^1.0.0",
     "dtype": "^2.0.0",
     "ndarray": "^1.0.18",

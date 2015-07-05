@@ -5,7 +5,7 @@ var through = require('through2')
 var defined = require('defined')
 var Ndarray = require('ndarray')
 var getDataType = require('dtype')
-var toUint8 = require('buffer-to-uint8array')
+var bufferToTypedArray = require('buffer-to-typed-array')
 var rangeFit = require('range-fit')
 
 module.exports = audioReadStream
@@ -45,13 +45,6 @@ function audioReadStream (opts) {
   return audio
 }
 
-function bufferToTypedArray (dtype) {
-  var TypedArray = getDataType(dtype)
-  return function (buf) {
-    return new TypedArray(toUint8(buf).buffer)
-  }
-}
-    
 function parseRawAudio (opts) {
   var toTypedArray = bufferToTypedArray(opts.dtype)
 
