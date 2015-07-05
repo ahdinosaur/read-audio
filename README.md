@@ -15,25 +15,29 @@ npm i --save read-audio
 ## usage
 
 ```
+
 var readAudio = require('read-audio')
 var through = require('through2')
-var show = require('ndarray-show')
+var terminalBar = require('terminal-bar')
 
-var audio = readAudio({
-  soxPath: 'sox',
+var audio = audioReadStream({
+  buffer: 1024,
   inFile: '-d', // '-d' is default device
   channels: 2,
-  rate: 48000,
+  rate: 44000,
   dtype: 'int32',
     // int8, uint8, int16, uint16,
     // int32, uint32, float32, float64
     // also supported
+  soxPath: 'sox'
 })
 
 audio.stderr.pipe(process.stderr)
+
 audio
 .pipe(through.obj(function (arr, enc, cb) {
-  cb(null, show(arr))
+  var data = [].slice.call(arr.data).slice(0, 128)
+  cb(null, terminalBar(data) + "\n")
 }))
 .pipe(process.stdout)
 ```
