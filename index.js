@@ -54,7 +54,7 @@ function parseRawAudio (opts) {
     var arr = toTypedArray(buf)
     var ndarr = Ndarray(
       arr,
-      [opts.channels, arr.length / opts.channels]
+      [arr.length / opts.channels, opts.channels]
     )
     cb(null, ndarr)
   })
