@@ -7,6 +7,8 @@ var Ndarray = require('ndarray')
 var getDataType = require('dtype')
 var bufferToTypedArray = require('buffer-to-typed-array')
 var rangeFit = require('range-fit')
+var intmin = require('compute-intmin')
+var intmax = require('compute-intmax')
 
 module.exports = audioReadStream
 
@@ -92,25 +94,20 @@ function getBits (dtype) {
 
 function normalize (opts) {
   return through.obj(function (audioIn, enc, cb) {
-    var maxVal, minVal
-    switch (opts.dtype[0]) {
-      case 'u':
-        minVal = 0
-        maxVal = Math.pow(2, opts.bits) - 1
-        break
-      case 'i':
-        minVal = -Math.pow(2, opts.bits - 1)
-        maxVal = Math.pow(2, opts.bits - 1) - 1
-        break
-      case 'f':
-        // not necessary to normalize
-        // TODO: double check this on a system that supports floats from SoX
-        return cb(null, audioIn)
+    // not necessary to normalize floats
+    // TODO: double check this on a system that supports floats from SoX
+    if (opts.dtype[0] === 'f') {
+      return cb(null, audioIn)
     }
+
+    var minVal = intmin(opts.dtype)
+    var maxVal = intmax(opts.dtype)
+
     var audioOut = Ndarray(new Float32Array(audioIn.data.length), audioIn.shape)
     for (var i = 0; i < audioOut.data.length; i++) {
       audioOut.data[i] = rangeFit(audioIn.data[i], minVal, maxVal, -1.0, 1.0)
     }
+
     cb(null, audioOut)
   })
 }

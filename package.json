@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "buffer-to-typed-array": "^2.0.0",
+    "compute-intmax": "^1.0.0",
+    "compute-intmin": "^1.0.0",
     "defined": "^1.0.0",
     "dtype": "^2.0.0",
     "ndarray": "^1.0.18",
