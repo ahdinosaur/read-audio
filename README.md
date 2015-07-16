@@ -20,7 +20,7 @@ var readAudio = require('read-audio')
 var through = require('through2')
 var terminalBar = require('terminal-bar')
 
-var audio = audioReadStream({
+var audio = readAudio({
   buffer: 1024,
   inFile: '-d', // '-d' is default device
   channels: 2,
@@ -40,6 +40,14 @@ audio
   cb(null, terminalBar(data) + "\n")
 }))
 .pipe(process.stdout)
+```
+
+(To run this example you will need:)
+
+```
+brew install sox
+npm i --save through2
+npm i --save terminal-bar
 ```
 
 ## license
