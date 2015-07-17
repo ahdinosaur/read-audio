@@ -1,6 +1,6 @@
 {
   "name": "read-audio",
-  "version": "6.0.0",
+  "version": "6.0.2",
   "description": "read audio as a stream of ndsamples",
   "main": "index.js",
   "scripts": {
