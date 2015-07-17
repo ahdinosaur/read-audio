@@ -1,6 +1,6 @@
 # read-audio 
 
-use SoX to read audio samples as a stream of typed ndarrays of floats between -1.0 and 1.0.
+use [SoX](http://sox.sourceforge.net/) to read audio samples as a stream of typed ndarrays of floats between -1.0 and 1.0.
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
@@ -12,6 +12,9 @@ with [npm](https://npmjs.org), do:
 npm i --save read-audio
 ```
 
+### SoX
+
+`read-audio` depends on having [SoX](http://sox.sourceforge.net/) installed:
 ## usage
 
 ```
