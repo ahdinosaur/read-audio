@@ -15,10 +15,13 @@ npm i --save read-audio
 ### SoX
 
 `read-audio` depends on having [SoX](http://sox.sourceforge.net/) installed:
+
+- on Mac OS X, do `brew install sox`
+- on Debian-based Linux distros (e.g. Ubuntu), do `sudo apt-get install sox`
+
 ## usage
 
 ```
-
 var readAudio = require('read-audio')
 var through = require('through2')
 var terminalBar = require('terminal-bar')
@@ -48,7 +51,6 @@ audio
 (To run this example you will need:)
 
 ```
-brew install sox
 npm i --save through2
 npm i --save terminal-bar
 ```
