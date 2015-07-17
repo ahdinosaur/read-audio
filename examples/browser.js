@@ -17,19 +17,10 @@ readAudio({
   if (err) { throw err }
 
   stream
-  .pipe(writeAudio({
-    canvas: canvas,
-    color: 'blue'
-  }))
-})
-
-function writeAudio (opts) {
-
-  return through.obj(function (audio, enc, cb) {
-    drawAudio(opts.canvas, audio, opts.color)
-    cb()
+  .on('data', function (audio) {
+    drawAudio(canvas, audio, 'blue')
   })
-}
+})
 
 // https://github.com/meandavejustice/draw-wave/blob/master/index.js
 function drawAudio (canvas, audio, color) {
