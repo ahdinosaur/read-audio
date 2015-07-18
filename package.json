@@ -1,7 +1,7 @@
 {
   "name": "read-audio",
   "version": "6.0.2",
-  "description": "read audio as a stream of ndsamples",
+  "description": "read audio samples as a stream of ndarrays of floats between -1.0 and 1.0.",
   "main": "main.js",
   "browser": "browser.js",
   "scripts": {
@@ -14,13 +14,19 @@
     "url": "https://github.com/livejs/read-audio"
   },
   "keywords": [
-    "ndsamples",
     "audio",
     "webaudio",
     "web",
     "ndarray",
     "read",
-    "stream"
+    "readable",
+    "stream",
+    "float",
+    "samples",
+    "amplitude",
+    "raw",
+    "microphone",
+    "mic"
   ],
   "author": "ahdinosaur",
   "license": "ISC",
