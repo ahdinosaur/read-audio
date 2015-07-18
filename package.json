@@ -35,6 +35,8 @@
   },
   "homepage": "https://github.com/livejs/read-audio",
   "devDependencies": {
+    "CBuffer": "^1.1.0",
+    "amplitude-viewer": "0.0.2",
     "budo": "^4.1.0",
     "terminal-bar": "0.0.3"
   },
