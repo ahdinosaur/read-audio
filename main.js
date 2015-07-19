@@ -41,6 +41,7 @@ function audioReadStream (opts) {
   // stash stderr on the audio stream
   audio.stderr = ps.stderr
     .pipe(through.obj())
+
   // stash process on the audio stream
   audio.ps = ps
   
