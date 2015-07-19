@@ -1,4 +1,4 @@
-var audioReadStream = require('./')
+var audioReadStream = require('../')
 var through = require('through2')
 var terminalBar = require('terminal-bar')
 
