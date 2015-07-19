@@ -16,6 +16,7 @@ function defaultOpts (opts) {
   opts = defined(opts, {})
   opts.channels = defined(opts.channels, 1)
   opts.buffer = defined(opts.buffer, 1024)
+  opts.highWaterMark = defined(opts.highWaterMark, 1)
   return opts
 }
 
@@ -38,7 +39,9 @@ function createMicStream (opts, cb) {
 }
 
 function micToSamples (opts) {
-  return through.obj(function(channels, enc, cb) {
+  return through.obj({
+    highWaterMark: opts.highWaterMark
+  }, function(channels, enc, cb) {
     var samples = Ndarray(
       new Float32Array(opts.buffer * opts.channels),
       [opts.buffer, opts.channels]
