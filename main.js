@@ -36,7 +36,9 @@ function audioReadStream (opts) {
   var audio = ps.stdout
     .pipe(parseRawAudio(opts))
     .pipe(normalize(opts))
-    .pipe(through.obj())
+    .pipe(through.obj({
+      highWaterMark: opts.highWaterMark
+    }))
 
   // stash stderr on the audio stream
   audio.stderr = ps.stderr
@@ -51,7 +53,9 @@ function audioReadStream (opts) {
 function parseRawAudio (opts) {
   var toTypedArray = bufferToTypedArray(opts.dtype)
 
-  return through.obj(function (buf, enc, cb) {
+  return through.obj({
+    highWaterMark: opts.highWaterMark
+  }, function (buf, enc, cb) {
     var arr = toTypedArray(buf)
     var ndarr = Ndarray(
       arr,
@@ -69,6 +73,7 @@ function defaultOpts (opts) {
   opts.channels = defined(opts.channels, 1)
   opts.rate = defined(opts.rate, 48000)
   opts.buffer = defined(opts.buffer, 1024)
+  opts.highWaterMark = defined(opts.highWaterMark, 1)
   return opts
 }
 
@@ -94,7 +99,9 @@ function getBits (dtype) {
 }
 
 function normalize (opts) {
-  return through.obj(function (audioIn, enc, cb) {
+  return through.obj({
+    highWaterMark: opts.highWaterMark
+  }, function (audioIn, enc, cb) {
     // not necessary to normalize floats
     // TODO: double check this on a system that supports floats from SoX
     if (opts.dtype[0] === 'f') {
