@@ -62,8 +62,9 @@ function readAudio (opts, cb) {
     input.connect(recorder)
     recorder.connect(context.destination)
 
-    // save reference to recorder,
-    // stops audio process from being GC'd
+    // save reference to Web Audio nodes, which
+    // prevents audio processing from being GC'd
+    stream._input = input
     stream._recorder = recorder
 
     return stream
