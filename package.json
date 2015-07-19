@@ -47,7 +47,6 @@
     "defined": "^1.0.0",
     "dtype": "^2.0.0",
     "getusermedia": "^1.3.2",
-    "microphone-stream": "^1.0.0",
     "ndarray": "^1.0.18",
     "range-fit": "^0.1.1",
     "through2": "^0.6.5"
