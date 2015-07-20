@@ -1,6 +1,6 @@
 # read-audio 
 
-read audio samples as a stream of typed [ndarray](https://npmjs.org/ndarray)s of floats between -1.0 and 1.0.
+read audio samples as a stream of [ndsamples](https://npmjs.org/samples)
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
