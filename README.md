@@ -62,9 +62,12 @@ var audio = readAudio({
 ### using `browserify`
 
 ```
-var audio = readAudio({
+readAudio({
   buffer: 1024,
-  channels: 2
+  channels: 2,
+  input: audioNode // otherwise use microphone
+}, function (err, audio) {
+  
 })
 ```
 
