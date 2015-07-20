@@ -5,9 +5,12 @@
   "main": "main.js",
   "browser": "browser.js",
   "scripts": {
-    "run-main": "node examples/main.js",
-    "run-browser": "budo examples/browser.js",
-    "run": "npm run run-main && npm run run-browser"
+    "main": "node examples/main.js",
+    "browser": "budo examples/browser.js --dir examples --serve bundle.js",
+    "test": "browserify test.js | smokestack | tap-spec",
+    "build": "browserify examples/browser.js -o examples/bundle.js -g uglifyify",
+    "push": "gh-pages -d examples",
+    "deploy": "npm run build && npm run push && rm examples/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -38,7 +41,9 @@
     "CBuffer": "^1.1.0",
     "amplitude-viewer": "0.0.2",
     "budo": "^4.1.0",
-    "terminal-bar": "0.0.3"
+    "gh-pages": "^0.3.1",
+    "terminal-bar": "0.0.3",
+    "uglifyify": "^3.0.1"
   },
   "dependencies": {
     "buffer-to-typed-array": "^2.0.0",
