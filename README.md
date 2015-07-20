@@ -1,6 +1,6 @@
 # read-audio 
 
-read audio samples as a stream of [ndsamples](https://npmjs.org/samples)
+read audio samples as a stream of [ndsamples](https://npmjs.org/ndsamples)
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
