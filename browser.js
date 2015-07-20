@@ -1,7 +1,7 @@
 var getUserMedia = require('getusermedia')
 var through = require('through2')
 var defined = require('defined')
-var Ndarray = require('ndarray')
+var Ndsamples = require('ndsamples')
 
 module.exports = readAudio
  
@@ -76,10 +76,13 @@ function readAudio (opts, cb) {
       var numChannels = audioIn.numberOfChannels
       var numSamplesPerChannel = audioIn.length
 
-      var samples = Ndarray(
-        new Float32Array(numSamplesPerChannel * numChannels),
-        [numSamplesPerChannel, numChannels]
-      )
+      var samples = Ndsamples({
+        data: new Float32Array(numSamplesPerChannel * numChannels),
+        shape: [numSamplesPerChannel, numChannels],
+        format: {
+          sampleRate: context.sampleRate
+        }
+      })
 
       for (var ci = 0; ci < numChannels; ci++) {
         var channel = audioIn.getChannelData(ci)

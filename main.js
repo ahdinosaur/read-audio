@@ -3,7 +3,7 @@
 var spawn = require('child_process').spawn
 var through = require('through2')
 var defined = require('defined')
-var Ndarray = require('ndarray')
+var Ndsamples = require('ndsamples')
 var getDataType = require('dtype')
 var bufferToTypedArray = require('buffer-to-typed-array')
 var rangeFit = require('range-fit')
@@ -57,11 +57,14 @@ function parseRawAudio (opts) {
     highWaterMark: opts.highWaterMark
   }, function (buf, enc, cb) {
     var arr = toTypedArray(buf)
-    var ndarr = Ndarray(
-      arr,
-      [arr.length / opts.channels, opts.channels]
-    )
-    cb(null, ndarr)
+    var audio = {
+      data: arr,
+      shape: [arr.length / opts.channels, opts.channels],
+      format: {
+        sampleRate: opts.rate
+      }
+    }
+    cb(null, audio)
   })
 }
 
@@ -105,13 +108,18 @@ function normalize (opts) {
     // not necessary to normalize floats
     // TODO: double check this on a system that supports floats from SoX
     if (opts.dtype[0] === 'f') {
-      return cb(null, audioIn)
+      return cb(null, Ndsamples(audioIn))
     }
 
     var minVal = intmin(opts.dtype)
     var maxVal = intmax(opts.dtype)
 
-    var audioOut = Ndarray(new Float32Array(audioIn.data.length), audioIn.shape)
+    var audioOut = Ndsamples({
+      data: new Float32Array(audioIn.data.length),
+      shape: audioIn.shape,
+      format: audioIn.format
+    })
+
     for (var i = 0; i < audioOut.data.length; i++) {
       audioOut.data[i] = rangeFit(audioIn.data[i], minVal, maxVal, -1.0, 1.0)
     }
