@@ -12,12 +12,6 @@ var ascope = AmpViewer({
 })
 ascope.appendTo(document.body)
 
-var style = document.createElement('link')
-style.setAttribute('rel', 'stylesheet')
-style.setAttribute('type', 'text/css')
-style.href = './examples/browser.css'
-document.head.appendChild(style)
-
 readAudio({
   buffer: 1024
 }, function (err, stream) {
