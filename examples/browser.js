@@ -1,6 +1,7 @@
 var through = require('through2')
 var AmpViewer = require('amplitude-viewer')
 var CBuffer = require('CBuffer')
+var getUserMedia = require('getusermedia')
 
 var readAudio = require('../')
 
@@ -12,10 +13,18 @@ var ascope = AmpViewer({
 })
 ascope.appendTo(document.body)
 
-readAudio({
-  buffer: 1024
-}, function (err, stream) {
+// otherwise return microphone input
+getUserMedia({
+  video: false,
+  audio: true
+}, function(err, source) {
   if (err) { throw err }
+
+  var stream = readAudio({
+    source: source,
+    buffer: 1024
+  })
+  
   var cbuf = CBuffer(1024 * 10)
 
   stream

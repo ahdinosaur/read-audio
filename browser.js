@@ -1,11 +1,10 @@
-var getUserMedia = require('getusermedia')
 var through = require('through2')
 var defined = require('defined')
 var Ndsamples = require('ndsamples')
 
 module.exports = readAudio
  
-function readAudio (opts, cb) {
+function readAudio (opts) {
   opts = defined(opts, {})
 
   // get opts
@@ -17,55 +16,34 @@ function readAudio (opts, cb) {
     var AudioContext = window.AudioContext || window.webkitAudioContext
     context = new AudioContext
   }
-  var input = opts.input
+  var source = opts.source
 
-  createMicStream(cb)
-
-  function createMicStream (cb) {
-    getAudioInput(function(err, input) {
-      if (err) { return cb(err) }
-
-      var stream = audioInputToStream(input)
-
-      cb(null, stream)
-    })
+  if (isMediaStream(source)) {
+    source = getAudioSourceFromMediaStream(source)
   }
 
-  function getAudioInput (cb) {
-    // if input given, use it
-    if (input) {
-      return cb(null, input)
-    }
+  return audioSourceToStream(source)
 
-    // otherwise return microphone input
-    getUserMedia({
-      video: false,
-      audio: true
-    }, function(err, micStream) {
-      if (err) { return cb(err) }
-
-      input = context.createMediaStreamSource(micStream)
-
-      cb(null, input)
-    })
+  function getAudioSourceFromMediaStream (mediaStream) {
+    return context.createMediaStreamSource(mediaStream)
   }
 
-  function audioInputToStream (input) {
+  function audioSourceToStream (source) {
     var stream = through.obj({
       highWaterMark: highWaterMark
     })
 
-    var recorder = context.createScriptProcessor(buffer, channels, channels);
+    var processor = context.createScriptProcessor(buffer, channels, channels)
 
-    recorder.onaudioprocess = processInput(stream)
+    processor.onaudioprocess = processInput(stream)
 
-    input.connect(recorder)
-    recorder.connect(context.destination)
+    source.connect(processor)
+    processor.connect(context.destination)
 
     // save reference to Web Audio nodes, which
     // prevents audio processing from being GC'd
-    stream._input = input
-    stream._recorder = recorder
+    stream.__source = source
+    stream.__processor = processor
 
     return stream
   }
@@ -95,4 +73,8 @@ function readAudio (opts, cb) {
       stream.write(samples)
     }
   }
+}
+
+function isMediaStream (obj) {
+  return obj && obj.toString() === '[object MediaStream]'
 }
