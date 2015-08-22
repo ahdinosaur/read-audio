@@ -61,15 +61,26 @@ var audio = readAudio({
 
 ### using `browserify`
 
+`npm install --save getusermedia`
+
 ```
-readAudio({
-  buffer: 1024,
-  channels: 2,
-  input: audioNode // otherwise use microphone
-}, function (err, audio) {
-  
+getUserMedia({
+  video: false,
+  audio: true
+}, function (err, media) {
+  if (err) { throw err }
+
+  var audio = readAudio({
+    source: media,
+    buffer: 1024,
+    channels: 2,
 })
 ```
+
+`source` can be either MediaStream[0] or AudioNode[1]
+
+[0](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_API#LocalMediaStream)
+[1](https://developer.mozilla.org/en-US/docs/Web/API/AudioNode)
 
 ## license
 
