@@ -37,8 +37,8 @@ var audio = readAudio()
 (To run this example you will need:)
 
 ```
-npm i --save through2
-npm i --save terminal-bar
+npm install --save through2
+npm install --save terminal-bar
 ```
 
 ## api
