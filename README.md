@@ -1,6 +1,6 @@
 # read-audio 
 
-read audio samples as a stream of [ndsamples](https://npmjs.org/ndsamples)
+read audio samples as a [source pull stream](https://github.com/dominictarr/pull-stream) of [ndsamples](https://npmjs.org/ndsamples)
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
@@ -23,21 +23,25 @@ using `read-audio` with `node` depends on having [SoX](http://sox.sourceforge.ne
 
 ```
 var readAudio = require('read-audio')
-var through = require('through2')
+var pull = require('pull-stream')
 var terminalBar = require('terminal-bar')
 
-var audio = readAudio()
-.pipe(through.obj(function (arr, enc, cb) {
-  var data = [].slice.call(arr.data).slice(0, 128)
-  cb(null, terminalBar(data) + "\n")
-}))
-.pipe(process.stdout)
+pull(
+  readAudio(),
+  pull.map(function (arr, enc, cb) {
+    var data = [].slice.call(arr.data, 0, 128)
+    return terminalBar(data) + "\n"
+  }),
+  pull.drain(function (str) {
+    process.stdout.write(str)
+  })
+)
 ```
 
 (To run this example you will need:)
 
 ```
-npm install --save through2
+npm install --save pull-stream
 npm install --save terminal-bar
 ```
 
@@ -84,4 +88,18 @@ getUserMedia({
 
 ## license
 
-ISC
+The Apache License
+
+Copyright &copy; 2016 Michael Williams
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

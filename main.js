@@ -1,7 +1,6 @@
 'use strict';
 
 var spawn = require('child_process').spawn
-var through = require('through2')
 var defined = require('defined')
 var Ndsamples = require('ndsamples')
 var getDataType = require('dtype')
@@ -9,10 +8,12 @@ var bufferToTypedArray = require('buffer-to-typed-array')
 var rangeFit = require('range-fit')
 var intmin = require('compute-intmin')
 var intmax = require('compute-intmax')
+var pull = require('pull-stream')
+var toPull = require('stream-to-pull-stream')
 
-module.exports = audioReadStream
+module.exports = readAudio
 
-function audioReadStream (opts) {
+function readAudio (opts, onAbort) {
   opts = defaultOpts(opts)
 
   // get derived opts
@@ -33,16 +34,14 @@ function audioReadStream (opts) {
   )
 
   // get audio
-  var audio = ps.stdout
-    .pipe(parseRawAudio(opts))
-    .pipe(normalize(opts))
-    .pipe(through.obj({
-      highWaterMark: opts.highWaterMark
-    }))
+  var audio = pull(
+    toPull(ps.stdout),
+    pull.map(parseRawAudio(opts)),
+    pull.map(normalize(opts))
+  )
 
   // stash stderr on the audio stream
-  audio.stderr = ps.stderr
-    .pipe(through.obj())
+  audio.stderr = toPull(ps.stderr)
 
   // stash process on the audio stream
   audio.ps = ps
@@ -53,19 +52,16 @@ function audioReadStream (opts) {
 function parseRawAudio (opts) {
   var toTypedArray = bufferToTypedArray(opts.dtype)
 
-  return through.obj({
-    highWaterMark: opts.highWaterMark
-  }, function (buf, enc, cb) {
+  return function (buf) {
     var arr = toTypedArray(buf)
-    var audio = {
+    return {
       data: arr,
       shape: [arr.length / opts.channels, opts.channels],
       format: {
         sampleRate: opts.rate
       }
     }
-    cb(null, audio)
-  })
+  }
 }
 
 function defaultOpts (opts) {
@@ -102,9 +98,7 @@ function getBits (dtype) {
 }
 
 function normalize (opts) {
-  return through.obj({
-    highWaterMark: opts.highWaterMark
-  }, function (audioIn, enc, cb) {
+  return function (audioIn, enc, cb) {
     // not necessary to normalize floats
     // TODO: double check this on a system that supports floats from SoX
     if (opts.dtype[0] === 'f') {
@@ -124,6 +118,6 @@ function normalize (opts) {
       audioOut.data[i] = rangeFit(audioIn.data[i], minVal, maxVal, -1.0, 1.0)
     }
 
-    cb(null, audioOut)
-  })
+    return audioOut
+  }
 }

@@ -1,23 +1,22 @@
-var through = require('through2')
+var pull = require('pull-stream')
+var Pushable = require('pull-pushable')
 var defined = require('defined')
 var Ndsamples = require('ndsamples')
 
 module.exports = readAudio
  
-function readAudio (opts) {
+function readAudio (opts, onAbort) {
   opts = defined(opts, {})
 
   // get opts
   var channels = defined(opts.channels, 1)
   var buffer = defined(opts.buffer, 1024)
-  var highWaterMark = defined(opts.highWaterMark, 1)
   var context = opts.context
   if (context == null) {
     var AudioContext = window.AudioContext || window.webkitAudioContext
     context = new AudioContext
   }
   var source = opts.source
-
   if (isMediaStream(source)) {
     source = getAudioSourceFromMediaStream(source)
   }
@@ -29,26 +28,24 @@ function readAudio (opts) {
   }
 
   function audioSourceToStream (source) {
-    var stream = through.obj({
-      highWaterMark: highWaterMark
-    })
+    var pushable = Pushable(onAbort)
 
     var processor = context.createScriptProcessor(buffer, channels, channels)
 
-    processor.onaudioprocess = processInput(stream)
+    processor.onaudioprocess = processInput(pushable)
 
     source.connect(processor)
     processor.connect(context.destination)
 
     // save reference to Web Audio nodes, which
     // prevents audio processing from being GC'd
-    stream.__source = source
-    stream.__processor = processor
+    pushable.__source = source
+    pushable.__processor = processor
 
-    return stream
+    return pushable
   }
 
-  function processInput (stream) {
+  function processInput (pushable) {
     return function onAudioProcess (e) {
       var audioIn = e.inputBuffer
       var numChannels = audioIn.numberOfChannels
@@ -70,7 +67,7 @@ function readAudio (opts) {
         }
       }
 
-      stream.write(samples)
+      pushable.push(samples)
     }
   }
 }
