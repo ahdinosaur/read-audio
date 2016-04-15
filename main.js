@@ -1,7 +1,6 @@
 'use strict';
 
 var spawn = require('child_process').spawn
-var defined = require('defined')
 var Ndsamples = require('ndsamples')
 var getDataType = require('dtype')
 var bufferToTypedArray = require('buffer-to-typed-array')
@@ -10,12 +9,16 @@ var intmin = require('compute-intmin')
 var intmax = require('compute-intmax')
 var pull = require('pull-stream')
 var toPull = require('stream-to-pull-stream')
+var Tc = require('tcomb')
 
-module.exports = readAudio
+var types = require('./types')
+
+module.exports = Tc.func(
+  [types.NodeOptions, Tc.Function], types.PullStreamSource
+).of(readAudio)
 
 function readAudio (opts, onAbort) {
-  opts = defaultOpts(opts)
-
+  console.log('opts', opts, 'onAbort', onAbort)
   // get derived opts
   opts = deriveOpts(opts)
   
@@ -64,22 +67,12 @@ function parseRawAudio (opts) {
   }
 }
 
-function defaultOpts (opts) {
-  opts = defined(opts, {})
-  opts.soxPath = defined(opts.soxPath, 'sox')
-  opts.inFile = defined(opts.inFile, '-d')
-  opts.dtype = defined(opts.dtype, 'int32')
-  opts.channels = defined(opts.channels, 1)
-  opts.rate = defined(opts.rate, 48000)
-  opts.buffer = defined(opts.buffer, 1024)
-  opts.highWaterMark = defined(opts.highWaterMark, 1)
-  return opts
-}
-
 function deriveOpts (opts) {
-  opts.encoding = getEncoding(opts.dtype)
-  opts.bits = getBits(opts.dtype)
-  return opts
+  var patch = {
+    encoding: { $set: getEncoding(opts.dtype) },
+    bits: { $set: getBits(opts.dtype) },
+  }
+  return types.NodeOptions.update(opts, patch)
 }
 
 function getEncoding (dtype) {
@@ -98,11 +91,11 @@ function getBits (dtype) {
 }
 
 function normalize (opts) {
-  return function (audioIn, enc, cb) {
+  return function (audioIn) {
     // not necessary to normalize floats
     // TODO: double check this on a system that supports floats from SoX
     if (opts.dtype[0] === 'f') {
-      return cb(null, Ndsamples(audioIn))
+      return Ndsamples(audioIn)
     }
 
     var minVal = intmin(opts.dtype)
@@ -120,4 +113,8 @@ function normalize (opts) {
 
     return audioOut
   }
+}
+
+function defined (a, b) {
+  return Tc.Nil.is(a) ? b : a
 }

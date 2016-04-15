@@ -1,24 +1,20 @@
 var pull = require('pull-stream')
 var Pushable = require('pull-pushable')
-var defined = require('defined')
 var Ndsamples = require('ndsamples')
+var Tc = require('tcomb')
 
-module.exports = readAudio
+var types = require('./types')
+
+module.exports = Tc.func(
+  types.BrowserOptions, types.PullStreamSource
+).of(readAudio)
  
 function readAudio (opts, onAbort) {
-  opts = defined(opts, {})
-
-  // get opts
-  var channels = defined(opts.channels, 1)
-  var buffer = defined(opts.buffer, 1024)
-  var context = opts.context
-  if (context == null) {
-    var AudioContext = window.AudioContext || window.webkitAudioContext
-    context = new AudioContext
-  }
-  var source = opts.source
-  if (isMediaStream(source)) {
-    source = getAudioSourceFromMediaStream(source)
+  // derive opts
+  if (types.MediaStream.is(source)) {
+    opts = types.BrowserOptions.update(opts, {
+      source: { $set: getAudioSourceFromMediaStream(source) }
+    })
   }
 
   return audioSourceToStream(source)
@@ -70,8 +66,4 @@ function readAudio (opts, onAbort) {
       pushable.push(samples)
     }
   }
-}
-
-function isMediaStream (obj) {
-  return obj && obj.toString() === '[object MediaStream]'
 }
