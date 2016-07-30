@@ -73,5 +73,5 @@ function readAudio (opts, onAbort) {
 }
 
 function isMediaStream (obj) {
-  return obj && obj.toString() === '[object MediaStream]'
+  return obj && !!MediaStream && obj instanceof MediaStream
 }
