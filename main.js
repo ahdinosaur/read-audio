@@ -1,16 +1,17 @@
 'use strict';
 
-var os = require('os');
-var spawn = require('child_process').spawn;
-var defined = require('defined');
-var Ndsamples = require('ndsamples');
-var getDataType = require('dtype');
-var bufferToTypedArray = require('buffer-to-typed-array');
-var rangeFit = require('range-fit');
-var intmin = require('compute-intmin');
-var intmax = require('compute-intmax');
-var pull = require('pull-stream');
-var toPull = require('stream-to-pull-stream');
+var os = require('os')
+var fs = require('fs')
+var spawn = require('child_process').spawn
+var defined = require('defined')
+var Ndsamples = require('ndsamples')
+var getDataType = require('dtype')
+var bufferToTypedArray = require('buffer-to-typed-array')
+var rangeFit = require('range-fit')
+var intmin = require('compute-intmin')
+var intmax = require('compute-intmax')
+var pull = require('pull-stream')
+var toPull = require('stream-to-pull-stream')
 
 module.exports = readAudio
 
@@ -21,19 +22,28 @@ function readAudio (opts, onAbort) {
   // get derived opts
   opts = deriveOpts(opts)
 
-  // run process
-  if (os.platform() === 'darwin') {
-      ps = spawn(
-        opts.soxPath,
-        [ '--buffer', opts.buffer, '--bits', opts.bits, '--channels', opts.channels,
-          '--encoding', opts.encoding, '--rate', opts.rate, opts.inFile, '-p'
-        ]
-      )
-  } else {
+  if (fs.existsSync(opts.arecordPath)) {
       ps = spawn(
         opts.arecordPath,
-        [ '-D', 'hw:0,0', '-f', 'dat' ]
+        [ 
+          '-D', 'hw:0,0',
+          '-f', 'dat',
+          '--buffer-size', opts.buffer
+        ]
       );
+  } else {
+      ps = spawn(
+        opts.soxPath,
+        [ 
+            '--buffer', opts.buffer,
+            '--bits', opts.bits,
+            '--channels', opts.channels,
+            '--encoding', opts.encoding,
+            '--rate', opts.rate,
+            opts.inFile,
+            '-p'
+        ]
+      )
   }
 
 
