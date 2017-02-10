@@ -34,13 +34,13 @@ function readAudio (opts, onAbort) {
       ps = spawn(
         opts.soxPath,
         [ 
-            '--buffer', opts.buffer,
-            '--bits', opts.bits,
-            '--channels', opts.channels,
-            '--encoding', opts.encoding,
-            '--rate', opts.rate,
-            opts.inFile,
-            '-p'
+          '--buffer', opts.buffer,
+          '--bits', opts.bits,
+          '--channels', opts.channels,
+          '--encoding', opts.encoding,
+          '--rate', opts.rate,
+          opts.inFile,
+          '-p'
         ]
       )
   }
