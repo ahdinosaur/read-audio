@@ -1,6 +1,5 @@
 'use strict';
 
-var os = require('os')
 var fs = require('fs')
 var spawn = require('child_process').spawn
 var defined = require('defined')
