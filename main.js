@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs')
 var spawn = require('child_process').spawn
 var defined = require('defined')
 var Ndsamples = require('ndsamples')
@@ -14,24 +15,36 @@ var toPull = require('stream-to-pull-stream')
 module.exports = readAudio
 
 function readAudio (opts, onAbort) {
+  var ps;
   opts = defaultOpts(opts)
 
   // get derived opts
   opts = deriveOpts(opts)
-  
-  // run sox process
-  var ps = spawn(
-    opts.soxPath,
-    [
-      '--buffer', opts.buffer,
-      '--bits', opts.bits,
-      '--channels', opts.channels,
-      '--encoding', opts.encoding,
-      '--rate', opts.rate,
-      opts.inFile,
-      '-p'
-    ]
-  )
+
+  if (fs.existsSync(opts.arecordPath)) {
+      ps = spawn(
+        opts.arecordPath,
+        [ 
+          '-D', 'hw:0,0',
+          '-f', 'dat',
+          '--buffer-size', opts.buffer
+        ]
+      );
+  } else {
+      ps = spawn(
+        opts.soxPath,
+        [ 
+          '--buffer', opts.buffer,
+          '--bits', opts.bits,
+          '--channels', opts.channels,
+          '--encoding', opts.encoding,
+          '--rate', opts.rate,
+          opts.inFile,
+          '-p'
+        ]
+      )
+  }
+
 
   // get audio
   var audio = pull(
@@ -45,7 +58,7 @@ function readAudio (opts, onAbort) {
 
   // stash process on the audio stream
   audio.ps = ps
-  
+
   return audio
 }
 
@@ -67,6 +80,7 @@ function parseRawAudio (opts) {
 function defaultOpts (opts) {
   opts = defined(opts, {})
   opts.soxPath = defined(opts.soxPath, 'sox')
+  opts.arecordPath = defined(opts.arecordPath, 'arecord')
   opts.inFile = defined(opts.inFile, '-d')
   opts.dtype = defined(opts.dtype, 'int32')
   opts.channels = defined(opts.channels, 1)
