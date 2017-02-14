@@ -71,7 +71,7 @@ function parseRawAudio (opts) {
 function defaultOpts (opts) {
   opts = defined(opts, {})
   opts.soxPath = defined(opts.soxPath, 'sox')
-  opts.arecordPath = defined(opts.arecordPath, 'arecord')
+  opts.arecordPath = defined(opts.arecordPath, '/usr/bin/arecord')
   opts.inFile = defined(opts.inFile, '-d')
   opts.dtype = defined(opts.dtype, 'int32')
   opts.channels = defined(opts.channels, 1)
